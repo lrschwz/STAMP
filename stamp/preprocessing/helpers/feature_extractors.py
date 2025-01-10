@@ -83,7 +83,8 @@ class FeatureExtractorVirchow2:
         #Self?
         self.model = timm.create_model("hf-hub:paige-ai/Virchow2", pretrained=True, mlp_layer=SwiGLUPacked, act_layer=torch.nn.SiLU)
         model = model.eval()
-
+        transforms = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
+        
         #Specific from huggingface?
         if torch.cuda.is_available():
             self.model = self.model.to(device)
@@ -100,7 +101,6 @@ class FeatureExtractorVirchow2:
         print("Virchow2 model successfully initialised from helpers/feature_extractors.py...\n2)
         return model_name
 
-        transforms = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
 class FeatureExtractorUNI:
     def init_feat_extractor(self, device: str, **kwargs):
         """Extracts features from slide tiles. 
