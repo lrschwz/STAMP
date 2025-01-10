@@ -98,7 +98,7 @@ class FeatureExtractorVirchow2:
         ])
 
         model_name = 'virchow2'
-        print("Virchow2 model successfully initialised from helpers/feature_extractors.py...\n2)
+        print("Virchow2 model successfully initialised from helpers/feature_extractors.py...\n")
         return model_name
 
 class FeatureExtractorUNI:
