@@ -15,6 +15,13 @@ import os
 
 from .swin_transformer import swin_tiny_patch4_window7_224, ConvStem
 
+###Add for virchow2
+import timm
+from timm.data import resolve_data_config
+from timm.data.transforms_factory import create_transform
+from timm.layers import SwiGLUPacked
+from PIL import Image
+
 __version__ = "001_01-10-2023"
 
 def get_digest(file: str):
@@ -57,7 +64,43 @@ class FeatureExtractorCTP:
 
         print("CTransPath model successfully initialised...\n")
         return model_name
-        
+
+###Add Virchow2
+class FeatureExtractorVirchow2:
+    def init_feat_extractor(self, device: str, **kwargs):
+        asset_dir = f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.pt"
+        model
+        """Extracts features from slide tiles. 
+        Requirements: 
+            Permission from authors via huggingface: https://huggingface.co/paige-ai/Virchow2
+            Huggingface account with valid login token
+        On first model initialization, you will be prompted to enter your login token. The token is
+        then stored in ./home/<user>/.cache/huggingface/token. Subsequent inits do not require you to re-enter the token. 
+
+        Args:
+            device: "cuda" or "cpu"
+        """
+        #Self?
+        self.model = timm.create_model("hf-hub:paige-ai/Virchow2", pretrained=True, mlp_layer=SwiGLUPacked, act_layer=torch.nn.SiLU)
+        model = model.eval()
+
+        #Specific from huggingface?
+        if torch.cuda.is_available():
+            self.model = self.model.to(device)
+
+        #Transform like ctp
+        self.transform = transforms.Compose([
+            transforms.Resize(224),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
+
+        model_name = 'Virchow2"
+        print("Virchow2 model successfully initialised from helpers/feature_extractors.py...\n2)
+        return model_name
+
+        transforms = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
 class FeatureExtractorUNI:
     def init_feat_extractor(self, device: str, **kwargs):
         """Extracts features from slide tiles. 
