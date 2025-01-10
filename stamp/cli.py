@@ -153,6 +153,9 @@ def run_cli(args: argparse.Namespace):
                 raise ConfigurationError(f"Normalization template {normalization_template_path} does not exist, please run `stamp setup` to download it.")
             if c.feat_extractor == 'ctp':
                 model_path = f"{os.environ['STAMP_RESOURCES_DIR']}/ctranspath.pth"
+            ###Add Virchow2 as virchow2.pt
+            if c.feat_extractor == 'virchow2':
+                model_path = f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.pt"
             elif c.feat_extractor == 'uni':
                 model_path = f"{os.environ['STAMP_RESOURCES_DIR']}/uni/vit_large_patch16_224.dinov2.uni_mass100k/pytorch_model.bin"
             if not Path(model_path).exists():
