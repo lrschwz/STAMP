@@ -97,7 +97,7 @@ class FeatureExtractorVirchow2:
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 
-        model_name = 'Virchow2"
+        model_name = 'virchow2"
         print("Virchow2 model successfully initialised from helpers/feature_extractors.py...\n2)
         return model_name
 
