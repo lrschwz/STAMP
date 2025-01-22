@@ -136,9 +136,9 @@ def run_cli(args: argparse.Namespace):
                     import gdown
                     gdown.download(CTRANSPATH_WEIGHTS_URL, str(model_path))
                 elif feat_extractor == 'virchow2':
-                    print(f"Downloading Virchow2 weights from huggingface")
-                    from preprocessing.get_virchow2 import get_virchow2
-                    virchow2(checkpoint='virchow2.pt', assets_dir=f"{os.environ['STAMP_RESOURCES_DIR']}")
+                    print(f"Downloading Virchow2 weights from huggingface --> Change code")
+                    #from preprocessing.get_virchow2 import get_virchow2
+                    #virchow2(checkpoint='virchow2.pt', assets_dir=f"{os.environ['STAMP_RESOURCES_DIR']}")
                 elif feat_extractor == 'uni':
                     print(f"Downloading UNI weights")
                     from uni.get_encoder import get_encoder
