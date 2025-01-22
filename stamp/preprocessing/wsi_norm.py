@@ -84,7 +84,7 @@ def preprocess(output_dir: Path, wsi_dir: Path, model_path: Path, cache_dir: Pat
         extractor = FeatureExtractorCTP(checkpoint_path=model_path)
     ###Add Virchow2
     if feat_extractor == "virchow2":
-        extractor = FeatureExtractorVirchow2()    
+        extractor = FeatureExtractorVirchow2(checkpoint_path=model_path)    
     elif feat_extractor == "uni":
         extractor = FeatureExtractorUNI()
     else:
