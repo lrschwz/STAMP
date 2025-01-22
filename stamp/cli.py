@@ -123,6 +123,8 @@ def run_cli(args: argparse.Namespace):
             feat_extractor = cfg.preprocessing.feat_extractor
             if feat_extractor == 'ctp':
                 model_path = Path(f"{os.environ['STAMP_RESOURCES_DIR']}/ctranspath.pth")
+            elif feat_extractor == 'virchow2':
+                model_path = Path(f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.pt")
             elif feat_extractor == 'uni':
                 model_path = Path(f"{os.environ['STAMP_RESOURCES_DIR']}/uni/vit_large_patch16_224.dinov2.uni_mass100k/pytorch_model.bin")
             model_path.parent.mkdir(parents=True, exist_ok=True)
@@ -133,6 +135,10 @@ def run_cli(args: argparse.Namespace):
                     print(f"Downloading CTransPath weights to {model_path}")
                     import gdown
                     gdown.download(CTRANSPATH_WEIGHTS_URL, str(model_path))
+                elif feat_extractor == 'virchow2':
+                    print(f"Downloading Virchow2 weights from huggingface")
+                    from preprocessing.get_virchow2 import get_virchow2
+                    virchow2(checkpoint='virchow2.pt', assets_dir=f"{os.environ['STAMP_RESOURCES_DIR']}")
                 elif feat_extractor == 'uni':
                     print(f"Downloading UNI weights")
                     from uni.get_encoder import get_encoder
