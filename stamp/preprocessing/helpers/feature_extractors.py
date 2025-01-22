@@ -17,6 +17,7 @@ from .swin_transformer import swin_tiny_patch4_window7_224, ConvStem
 
 ###Add for virchow2
 import timm
+import logging
 from timm.data import resolve_data_config
 from timm.data.transforms_factory import create_transform
 from timm.layers import SwiGLUPacked
@@ -69,7 +70,6 @@ class FeatureExtractorCTP:
 class FeatureExtractorVirchow2:
     def init_feat_extractor(self, device: str, **kwargs):
         asset_dir = f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.pt"
-        model
         """Extracts features from slide tiles. 
         Requirements: 
             Permission from authors via huggingface: https://huggingface.co/paige-ai/Virchow2
@@ -80,11 +80,19 @@ class FeatureExtractorVirchow2:
         Args:
             device: "cuda" or "cpu"
         """
-        #Self?
         self.model = timm.create_model("hf-hub:paige-ai/Virchow2", pretrained=True, mlp_layer=SwiGLUPacked, act_layer=torch.nn.SiLU)
-        model = model.eval()
         transforms = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
-        
+        model = model.eval()
+        output = self.model()
+        class_token = output[:, 0]
+        patch_token = output[:, 5:]
+        embedding = torch.cat([class_token, patch_tokens.mean(1)], dim=-1)
+        self.model = model()
+
+        #Adding?
+        #state_dict = torch.load(ckpt_path, map_location="cpu")
+        missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
+                                                            
         #Specific from huggingface?
         if torch.cuda.is_available():
             self.model = self.model.to(device)
@@ -96,6 +104,13 @@ class FeatureExtractorVirchow2:
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
+
+        logging.info(f'Missing Keys: {missing_keys}')
+        logging.info(f'Unexpected Keys: {unexpected_keys}')
+        logging.info(str(model))
+
+        model.eval()
+        model.to(device)
 
         model_name = 'virchow2'
         print("Virchow2 model successfully initialised from helpers/feature_extractors.py...\n")
