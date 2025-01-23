@@ -70,48 +70,21 @@ class FeatureExtractorCTP:
 class FeatureExtractorVirchow2:
     def init_feat_extractor(self, device: str, **kwargs):
         asset_dir = f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.pt"
-        """Extracts features from slide tiles. 
-        Requirements: 
-            Permission from authors via huggingface: https://huggingface.co/paige-ai/Virchow2
-            Huggingface account with valid login token
-        On first model initialization, you will be prompted to enter your login token. The token is
-        then stored in ./home/<user>/.cache/huggingface/token. Subsequent inits do not require you to re-enter the token. 
-
-        Args:
-            device: "cuda" or "cpu"
-        """
-        self.model = timm.create_model("hf-hub:paige-ai/Virchow2", pretrained=True, mlp_layer=SwiGLUPacked, act_layer=torch.nn.SiLU)
-        transforms = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
+        
+        model = timm.create_model("hf-hub:paige-ai/Virchow2", pretrained=True, mlp_layer=SwiGLUPacked, act_layer=torch.nn.SiLU)
         model = model.eval()
-        output = self.model()
-        class_token = output[:, 0]
-        patch_token = output[:, 5:]
-        embedding = torch.cat([class_token, patch_tokens.mean(1)], dim=-1)
-        self.model = model()
-
-        #Adding?
-        #state_dict = torch.load(ckpt_path, map_location="cpu")
-        missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
-                                                            
-        #Specific from huggingface?
-        if torch.cuda.is_available():
-            self.model = self.model.to(device)
-
-        #Transform like ctp
-        self.transform = transforms.Compose([
-            transforms.Resize(224),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-        ])
-
-        logging.info(f'Missing Keys: {missing_keys}')
-        logging.info(f'Unexpected Keys: {unexpected_keys}')
-        logging.info(str(model))
-
-        model.eval()
-        model.to(device)
-
+        transforms = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
+        
+        #class_token = output[:, 0]
+        #patch_token = output[:, 5:]
+        #embedding = torch.cat([class_token, patch_tokens.mean(1)], dim=-1)
+        #model = embedding
+        
+        self.model = model
+        self.transforms = transforms
+        
+        digest = get_digest(f"{asset_dir}")
+        
         model_name = 'virchow2'
         print("Virchow2 model successfully initialised from helpers/feature_extractors.py...\n")
         return model_name
