@@ -22,7 +22,7 @@ from timm.data import resolve_data_config
 from timm.data.transforms_factory import create_transform
 from timm.layers import SwiGLUPacked
 from PIL import Image
-from hugginface_hub import hf_hub_download
+from huggingface_hub import hf_hub_download
 
 __version__ = "001_01-10-2023"
 
