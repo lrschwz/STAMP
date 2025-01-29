@@ -124,7 +124,7 @@ def run_cli(args: argparse.Namespace):
             if feat_extractor == 'ctp':
                 model_path = Path(f"{os.environ['STAMP_RESOURCES_DIR']}/ctranspath.pth")
             elif feat_extractor == 'virchow2':
-                model_path = Path(f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.pt")
+                model_path = Path(f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.bin")
             elif feat_extractor == 'uni':
                 model_path = Path(f"{os.environ['STAMP_RESOURCES_DIR']}/uni/vit_large_patch16_224.dinov2.uni_mass100k/pytorch_model.bin")
             model_path.parent.mkdir(parents=True, exist_ok=True)
@@ -136,9 +136,7 @@ def run_cli(args: argparse.Namespace):
                     import gdown
                     gdown.download(CTRANSPATH_WEIGHTS_URL, str(model_path))
                 elif feat_extractor == 'virchow2':
-                    print(f"Downloading Virchow2 weights from huggingface --> Change code")
-                    from preprocessing.helpers.preprocessing import FeatureExtractorsVirchow2
-                    FeatureExtractorsVirchow2()
+                    print(f"Downloading Virchow2 weights from huggingface and add to stamp/resources as virchow2.bin")
                 elif feat_extractor == 'uni':
                     print(f"Downloading UNI weights")
                     from uni.get_encoder import get_encoder
@@ -161,7 +159,7 @@ def run_cli(args: argparse.Namespace):
                 model_path = f"{os.environ['STAMP_RESOURCES_DIR']}/ctranspath.pth"
             ###Add Virchow2 as virchow2.pt
             if c.feat_extractor == 'virchow2':
-                model_path = f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.pt"
+                model_path = f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.bin"
             elif c.feat_extractor == 'uni':
                 model_path = f"{os.environ['STAMP_RESOURCES_DIR']}/uni/vit_large_patch16_224.dinov2.uni_mass100k/pytorch_model.bin"
             if not Path(model_path).exists():
