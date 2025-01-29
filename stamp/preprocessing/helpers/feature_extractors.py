@@ -77,7 +77,7 @@ class FeatureExtractorVirchow2:
         """
         v2_kwargs = {
             'model_name': 'hf-hub:paige-ai/Virchow2',
-            'img_size': 224
+            'img_size': 224,
             'mlp_layer': timm.layers.SwiGLUPacked,
             'act_layer': torch.nn.SiLU,
             'pretrained': True
