@@ -22,6 +22,7 @@ from timm.data import resolve_data_config
 from timm.data.transforms_factory import create_transform
 from timm.layers import SwiGLUPacked
 from PIL import Image
+from hugginface_hub import hf_hub_download
 
 __version__ = "001_01-10-2023"
 
@@ -68,22 +69,33 @@ class FeatureExtractorCTP:
 
 ###Add Virchow2
 class FeatureExtractorVirchow2:
+    def __init__(self,checkpoint_path:str):
+       self.checkpoint_path = checkpoint_path
+
     def init_feat_extractor(self, device: str, **kwargs):
-        asset_dir = f"{os.environ['STAMP_RESOURCES_DIR']}/virchow2.pt"
-        
-        model = timm.create_model("hf-hub:paige-ai/Virchow2", pretrained=True, mlp_layer=SwiGLUPacked, act_layer=torch.nn.SiLU)
-        model = model.eval()
-        transforms = create_transform(**resolve_data_config(model.pretrained_cfg, model=model))
-        
-        #class_token = output[:, 0]
-        #patch_token = output[:, 5:]
-        #embedding = torch.cat([class_token, patch_tokens.mean(1)], dim=-1)
-        #model = embedding
-        
-        self.model = model
-        self.transforms = transforms
-        
-        digest = get_digest(f"{asset_dir}")
+        """Extracts features from slide tiles. Recommended checkpoints in stamp/resources as virchow2.bin.
+        """
+        v2_kwargs = {
+            'model_name': 'hf-hub:paige-ai/Virchow2',
+            'img_size': 224
+            'mlp_layer': timm.layers.SwiGLUPacked,
+            'act_layer': torch.nn.SiLU,
+            'pretrained': True
+        }
+        model = timm.create_model(**v2_kwargs)
+        model.eval()
+        state_dict = torch.load(checkpoint_path, map_location="cpu")
+        missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=True)
+
+        if torch.cuda.is_available():
+            self.model = self.model.to(device)
+
+        self.transform = transforms.Compose([
+            transforms.Resize(224),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
         
         model_name = 'virchow2'
         print("Virchow2 model successfully initialised from helpers/feature_extractors.py...\n")
